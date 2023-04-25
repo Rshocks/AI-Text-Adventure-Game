@@ -1,0 +1,39 @@
+FUNCTION_BLOCK getEvent
+	VAR_INPUT				
+    	health : REAL;
+	END_VAR
+	
+	VAR_OUTPUT
+		event : REAL;
+	END_VAR
+
+	FUZZIFY health
+		TERM verylow := (0,1) (30,1) (40,0);
+    	TERM low := (30,1) (40,1) (50,0);
+    	TERM average := (45,0) (70,1) (95,0); 
+    	TERM high := (80,0) (100,1) (110,1);
+    	TERM veryhigh := (100,0) (120,1) (130,1);
+	END_FUZZIFY
+
+	DEFUZZIFY event 
+		TERM bad := 1;
+		TERM notgreat := 2;
+		TERM mediocre := 3;
+		TERM good := 4;
+		TERM great := 5;
+    	METHOD : COGS;
+    	DEFAULT := 2; 
+	END_DEFUZZIFY
+
+	RULEBLOCK No1
+    	AND : MIN;
+   	 	ACT : MIN;
+    	ACCU : MAX;
+
+    	RULE 1 : IF health IS verylow THEN event IS great;
+    	RULE 2 : IF health IS low THEN event IS good;
+    	RULE 3 : IF health IS average THEN event IS mediocre;
+    	RULE 4 : IF health IS high THEN event IS notgreat;
+    	RULE 5 : IF health IS veryhigh THEN event IS bad;
+	END_RULEBLOCK
+END_FUNCTION_BLOCK

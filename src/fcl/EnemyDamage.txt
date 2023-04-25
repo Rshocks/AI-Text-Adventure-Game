@@ -1,0 +1,33 @@
+FUNCTION_BLOCK getEnemyEvent
+	VAR_INPUT				
+    	health : REAL;
+	END_VAR
+	
+	VAR_OUTPUT
+		damage : REAL;
+	END_VAR
+
+	FUZZIFY health
+		TERM low := (0,1) (20,1) (30,0);
+		TERM medium := (30,0) (40,1) (45,1) (50,0);
+		TERM high := (50,0) (55,1) (65,1);
+	END_FUZZIFY
+
+	DEFUZZIFY damage 
+		TERM weak_attack := (1,1) (2,0);
+		TERM medium_attack := (1,0) (2,1) (3,0);
+		TERM strong_attack := (2,0) (3,1);
+    	METHOD : COG;
+    	DEFAULT := 2; 
+	END_DEFUZZIFY
+
+	RULEBLOCK No1
+    	AND : MIN;
+   	 	ACT : MIN;
+    	ACCU : MAX;
+
+    	RULE 1 : IF health IS high THEN damage IS weak_attack;
+    	RULE 2 : IF health IS medium THEN damage IS medium_attack;
+    	RULE 3 : IF health IS low THEN damage IS strong_attack;
+	END_RULEBLOCK
+END_FUNCTION_BLOCK
